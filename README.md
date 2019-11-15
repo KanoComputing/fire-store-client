@@ -2,7 +2,9 @@
 
 A simple NodeJS client that uploads APKs to the Amazon Fire Store.
 
-## Usage
+Documentation for the API: https://s3-us-west-1.amazonaws.com/devportal-reference-docs/appsubapi/swagger-en/index.html
+
+## Usage
 
 ```typescript
 import { FireStoreClient } from 'fire-store-client';
