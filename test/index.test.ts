@@ -22,6 +22,7 @@ tap.test(async t => {
             t.equal(body.get('scope'), 'appstore::apps:readwrite');
 
             t.equal(url, 'https://api.amazon.com/auth/o2/token');
+            t.equal((init.headers as any)['Content-Type'], 'application/x-www-form-urlencoded');
 
             return new Promise(resolve => resolve({
                 status: 200,
