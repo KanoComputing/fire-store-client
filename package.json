@@ -1,0 +1,21 @@
+{
+  "name": "fire-store-tools",
+  "version": "1.0.0",
+  "description": "Upload APKs to Amazon's Fire Store programmatically",
+  "main": "./out/index.js",
+  "scripts": {
+    "watch": "tsc -w",
+    "build": "tsc -b",
+    "test": "tap"
+  },
+  "author": "Radek Pazdera <me@radek.io> (http://radek.io)",
+  "license": "MIT",
+  "dependencies": {
+    "node-fetch": "^2.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^12.12.7",
+    "@types/node-fetch": "^2.5.3",
+    "tap": "^14.9.2"
+  }
+}
