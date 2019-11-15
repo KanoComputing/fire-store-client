@@ -14,6 +14,8 @@ export class FireStoreClient {
     token: string;
     expiry: number;
 
+    log(message: string) {}
+
     /* Testing */
     fetch: (url: RequestInfo, init?: RequestInit) => Promise<any> = fetch;
 
@@ -40,7 +42,7 @@ export class FireStoreClient {
         const res = await this.fetch(this.AUTH_URL, {
             method: 'POST',
             headers: {
-                'Content-Type': 'pplication/x-www-form-urlencoded',
+                'Content-Type': 'application/x-www-form-urlencoded',
             },
             body,
         });
@@ -57,25 +59,39 @@ export class FireStoreClient {
 
     async uploadApk(appId: string, apkPath: string) {
         if (!this.token || this.expiry > Date.now()) {
+            console.log('Authenticating...');
             await this.authenticate();
         }
 
-        const editRes = await this.fetch(`${this.BASE_URL}/v1/applications/${appId}/edits`, {
-            method: 'POST',
+        this.log('Looking for an open edit...');
+        let editRes = await this.fetch(`${this.BASE_URL}/v1/applications/${appId}/edits`, {
             headers: {
                 Authorization: `Bearer ${this.token}`
             }
         });
 
         if (!editRes.ok) {
-            throw new Error('Failed to create an edit');
+            this.log('Opening a new edit...');
+            editRes = await this.fetch(`${this.BASE_URL}/v1/applications/${appId}/edits`, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${this.token}`
+                }
+            });
         }
+
+        if (!editRes.ok) {
+            this.log(await editRes.json());
+            throw new Error('Failed to open an edit');
+        }
+
 
         const { id: editId } = await editRes.json();
 
+        this.log('Starting upload...');
         const uploadRes = await this.fetch(`${this.BASE_URL}/v1/applications/${appId}/edits/${editId}/apks/upload`, {
+            method: 'POST',
             headers: {
-                method: 'POST',
                 Authorization: `Bearer ${this.token}`,
                 'Content-Type': 'application/vnd.android.package-archive',
             },
@@ -86,6 +102,7 @@ export class FireStoreClient {
             throw new Error('Uploading APK failed');
         }
 
+        this.log('Upload complete.');
         return await uploadRes.json();
     }
 }
